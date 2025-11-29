@@ -5,8 +5,7 @@
     "dockerfile": "Dockerfile"
   },
   "runArgs": ["--gpus", "all"],
-  "postCreateCommand": "cd /workspace/experiments/nca_intelligence_metrics && rm -rf .venv && poetry install --no-root",
-  "workspaceFolder": "/workspace",
+  "postCreateCommand": "cd experiments/nca_intelligence_metrics && rm -rf .venv && poetry install --no-root",
   "customizations": {
     "vscode": {
       "extensions": [
@@ -15,8 +14,8 @@
         "charliermarsh.ruff"
       ],
       "settings": {
-        "python.defaultInterpreterPath": "/workspace/experiments/nca_intelligence_metrics/.venv/bin/python",
-        "terminal.integrated.cwd": "/workspace/experiments/nca_intelligence_metrics"
+        "python.defaultInterpreterPath": "${workspaceFolder}/experiments/nca_intelligence_metrics/.venv/bin/python",
+        "terminal.integrated.cwd": "${workspaceFolder}/experiments/nca_intelligence_metrics"
       }
     }
   }
