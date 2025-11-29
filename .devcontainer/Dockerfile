@@ -32,14 +32,15 @@ RUN groupadd --gid $USER_GID devuser \
 # Set working directory
 WORKDIR /workspace
 
-# Copy project files (context is parent directory)
-COPY --chown=devuser:devuser pyproject.toml poetry.lock* README.md ./
-COPY --chown=devuser:devuser src/ ./src/
-COPY --chown=devuser:devuser scripts/ ./scripts/
-COPY --chown=devuser:devuser tests/ ./tests/
+# Copy the entire repo
+COPY . .
 
-# Install dependencies
+# Install NCA experiment dependencies
+WORKDIR /workspace/experiments/nca_intelligence_metrics
 RUN poetry install --no-root --no-interaction
+
+# Back to repo root
+WORKDIR /workspace
 
 # Switch to non-root user
 USER devuser

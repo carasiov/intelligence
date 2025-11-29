@@ -1,5 +1,5 @@
 {
-  "name": "NCA Intelligence Metrics",
+  "name": "Intelligence Framework",
   "build": {
     "context": "..",
     "dockerfile": "Dockerfile"
@@ -23,7 +23,7 @@
       }
     }
   },
-  "postCreateCommand": "poetry install --no-root",
+  "postCreateCommand": "cd experiments/nca_intelligence_metrics && poetry install --no-root",
   "workspaceFolder": "/workspace",
   "containerUser": "root"
 }
