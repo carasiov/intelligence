@@ -1,0 +1,40 @@
+[tool.poetry]
+name = "nca-intelligence-metrics"
+version = "0.1.0"
+description = "Empirical validation of Resource-Bounded Intelligence framework using Neural Cellular Automata"
+authors = ["carasiov"]
+readme = "README.md"
+packages = [{include = "src"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+jax = {version = "^0.4.20", extras = ["cuda12"]}
+flax = "^0.8.0"
+optax = "^0.1.7"
+numpy = "^1.24.0"
+matplotlib = "^3.7.0"
+tqdm = "^4.65.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.0.0"
+ruff = "^0.1.0"
+ipython = "^8.0.0"
+
+[tool.poetry.scripts]
+run-phase1 = "scripts.run_phase1:main"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.ruff]
+line-length = 88
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W"]
+ignore = ["E501"]  # Line too long (handled by formatter)
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]

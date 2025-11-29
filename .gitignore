@@ -8,6 +8,7 @@ __pycache__/
 *.py[cod]
 *.egg-info/
 .eggs/
+.pytest_cache/
 
 # Experiment outputs
 experiments/*/results/
@@ -26,3 +27,6 @@ checkpoint_*/
 # OS
 .DS_Store
 Thumbs.db
+
+# Jupyter
+.ipynb_checkpoints/
