@@ -15,14 +15,14 @@ used in the project:
 
 The underlying objects (environments, goals, resources, policies,
 performance, intelligence functional) are defined in
-`01 INTELLIGENCE.md`. Here we assume that background and focus on
+`01_INTELLIGENCE.md`. Here we assume that background and focus on
 derived structures.
 
 ---
 
 ## 1. Setup and notation
 
-We briefly restate key objects and notation from `01 INTELLIGENCE.md`.
+We briefly restate key objects and notation from `01_INTELLIGENCE.md`.
 
 - \(\mathcal{E}\): environment class. Each \(e \in \mathcal{E}\) has a
   state space \(S_e\), observation space \(O_e\), and action space
@@ -31,7 +31,8 @@ We briefly restate key objects and notation from `01 INTELLIGENCE.md`.
 - \(G\): family of goal functionals
   \(g : \mathrm{Traj}(e) \to \mathbb{R}\).
 - \(R \in \mathcal{R}\): resource vector specifying constraints
-  (time, computation, energy, communication, …).
+  (time horizon \(T\), prediction horizon \(H\), computation, energy,
+  communication, …).
 - \(\Pi(R)\): set of policies respecting resource constraint \(R\).
 - \(\mathrm{Perf}(\pi; e, g, R)\): expected performance of \(\pi\) on
   goal \(g\) in environment \(e\) under \(R\).
@@ -199,6 +200,14 @@ of \(\pi\) as
 This is exactly the local contribution that appears in the intelligence
 functional \(I(\pi;\cdot)\).
 
+In contexts where a blind baseline \(\pi_{\mathrm{blind}}\) and a cost
+functional \(J(\cdot; e,g,R)\) are explicitly defined (see
+`01_INTELLIGENCE.md` §§2.3–3.3), one can also use the
+baseline-anchored normalization \(I_{\mathrm{local}}(\pi; e,g,R)\) in
+place of \(\mathrm{Perf} / \mathrm{Perf}^*\). The geometric definitions
+of light cones and capacity do not depend on which of these equivalent
+normalizations is chosen.
+
 ### 3.3 Goal-based cognitive light cone
 
 Fix a competence threshold \(\theta \in (0,1]\).
@@ -314,7 +323,7 @@ distribution over global trajectories. This motivates:
 
 **Definition 4.1 (Macro-policy induced by a multi-agent system).**  
 A **macro-policy** \(\Pi\) for environment \(e\) is a policy in the
-sense of `01 INTELLIGENCE.md`, mapping global observation histories to
+sense of `01_INTELLIGENCE.md`, mapping global observation histories to
 actions in \(A_e\).
 
 We say that a multi-agent system \((\{\pi_i\}, B)\) **induces** a
@@ -476,6 +485,15 @@ C_k = \min(N, k\,C_1).
 \]
 
 We take this as a given result for the present document.
+
+In the problem-space view, these capacity bounds can be interpreted as
+constraints on the **optimal blind-relative search efficiency**
+\(K_{\mathrm{opt}}(e,g,R)\) for detect-and-reach problems in this
+corridor: the larger the capturable region for a given resource vector
+\(R\), the larger the gap between blind search and optimal performance.
+Multi-agent composition enlarges the effectively capturable set (and
+hence the available \(K_{\mathrm{opt}}\)) until the environment is
+effectively covered and further gains are impossible.
 
 ### 6.3 Localized capture goals and goal-based cones
 
@@ -651,6 +669,24 @@ L_T(\Pi; e, R)
 \cup
 \{ L_T(\pi_i; e, R_i) \text{ for uncoupled } i \}.
 \]
+From the search-efficiency perspective:
+
+- When composition succeeds and \(\mathsf{IsAgent}\) holds for a
+  macro-agent \(\Pi\), we expect its blind-relative efficiency
+  \(K(\Pi; e,g,R)\) on genuinely macro-scale problems to be at least as
+  large as the best sub-agent’s \(K_i\) on those problems, and often
+  strictly larger.
+
+- In cases where the macro-agent represents and solves problems that no
+  sub-agent even encodes (e.g. whole-body morphogenesis), the **gains in
+  \(K\)** at the macro scale can be **superlinear** relative to any
+  simple function of the \(K_i\). This corresponds to genuine synergy:
+  the composed agent searches an effectively new problem space.
+
+- When coupling fails and \(\mathsf{IsAgent}\) breaks (fragmentation,
+  cancer, social breakdown), we expect the macro-scale \(K\) to drop
+  sharply (the global cone shrinks or shatters), even if some sub-agent
+  \(K_i\) values remain high for their local problems.
 
 This provides a geometric picture of **self fragmentation**, as seen in
 biological pathologies (e.g. cancer) or breakdown of coordinated
@@ -665,7 +701,7 @@ of symbiogenesis and multi-scale intelligence.
 
 ### 8.1 Symbiogenesis at the replicator level
 
-At the **replicator level** (see `01 INTELLIGENCE.md`), symbiogenesis
+At the **replicator level** (see `01_INTELLIGENCE.md`), symbiogenesis
 can be modeled by an operator
 
 \[
@@ -747,6 +783,29 @@ across scales, enabling larger and more remote goals to be pursued,
 while the intelligence functional measures how effectively these
 expanded capacities are actually used under resource constraints.
 
+### 8.6 Self-models and conscious macro-agents (informal)
+
+The multi-scale picture and the \(\mathsf{IsAgent}\) predicate allow a
+purely structural notion of when a set of components behaves as a
+single macro-agent. To connect this to consciousness in a functional
+sense, we may further distinguish **conscious macro-agents** as those
+composed agents that:
+
+- satisfy \(\mathsf{IsAgent}\) at some scale \(\Sigma\) (strong internal
+  coupling, a coherent macro-policy, a well-defined cognitive light
+  cone),
+- possess an internal self-model \(M\) that encodes (approximately) the
+  macro-agent’s own boundary, goals, and light cone, and through which
+  the macro-policy effectively factors, and
+- maintain their \(\mathsf{IsAgent}\) status over time via processes
+  that detect incoherence, update \(M\), and use the updated \(M\) to
+  steer behavior back toward coherent functioning.
+
+This is a **functional hypothesis**: it concerns which multi-scale
+agents we expect to exhibit the kinds of flexible, self-referential
+control associated with consciousness, without making claims about
+subjective experience.
+
 This completes the core module that unifies:
 
 - cognitive light cones (physical and goal-based),
@@ -755,4 +814,4 @@ This completes the core module that unifies:
 - and symbiogenesis,
 
 on top of the general intelligence functional defined in
-`01 INTELLIGENCE.md`.
+`01_INTELLIGENCE.md`.

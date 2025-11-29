@@ -82,12 +82,21 @@ We write \(G\) for a family of such goals, and assume that for each
 A **resource vector** \(R\) encodes the constraints under which a policy
 operates. It may contain components such as:
 
-- time budget (horizon) \(T\),
+- time budget (interaction horizon) \(T\),
+- prediction horizon \(H\) (how many steps into the future the agent can
+  effectively predict or evaluate when choosing actions),
 - computational budget (e.g. number of steps of internal computation),
 - energy or actuation budget,
 - memory capacity,
 - communication bandwidth (for multi-agent settings),
 - data budget (for learning).
+
+The distinction between \(T\) and \(H\) is important: \(T\) is how long
+the episode lasts (how much time the agent has), whereas \(H\) is how far
+ahead the agent can “see” in its internal evaluation of policies or
+trajectories. Simple agents often have \(H \approx 1\) even when \(T\) is
+large; more sophisticated agents can have \(H \gg 1\) but still be limited
+by a finite \(T\).
 
 We treat \(R\) as an element of an abstract resource space
 \(\mathcal{R}\). For each \(R\) we assume there is a well-defined set
@@ -127,11 +136,39 @@ resources \(R\) is
 := \sup_{\pi' \in \Pi(R)} \mathrm{Perf}(\pi'; e, g, R).
 \]
 
-We assume that for nontrivial goals \(\mathrm{Perf}^*(e,g,R) > 0\).
+We assume that for nontrivial goals \(\mathrm{Perf}^*(e,g,R) > 0\), and
+that goals are nonnegative in the sense that
+\(g(\mathrm{Traj}(e,\pi,R)) \ge 0\) for all resource-feasible policies
+\(\pi \in \Pi(R)\). Hence
+\(\mathrm{Perf}(\pi; e,g,R) \in [0,\mathrm{Perf}^*(e,g,R)]\) for all
+\(\pi \in \Pi(R)\).
 
 In general, \(\mathrm{Perf}^*\) depends on both the environment dynamics
 and the resource constraint \(R\); changing \(R\) may change what
 performance is achievable.
+
+### 2.3 Cost functionals and blind baselines
+
+In many applications it is convenient to work with a **cost functional**
+\(J(\pi; e,g,R)\) instead of performance, for example expected time or
+energy to achieve a goal, or the negative of a reward. Formally, we may
+take \(J\) to be any monotone transform of \(\mathrm{Perf}\) such that
+larger values of \(J\) correspond to worse outcomes.
+
+For a fixed \((e,g,R)\) we also distinguish two special policies:
+
+- a **blind baseline** \(\pi_{\mathrm{blind}}\), typically a max-entropy
+  or otherwise unstructured policy that ignores task-specific structure
+  while respecting the same resource constraint \(R\);
+- an **optimal** policy \(\pi^* \in \Pi(R)\) that attains
+  \(\mathrm{Perf}^*(e,g,R)\) (when it exists), or approaches it in the
+  sense of a maximizing sequence.
+
+We then write \(J(\pi_{\mathrm{blind}}; e,g,R)\) and
+\(J(\pi^*; e,g,R)\) for the corresponding costs. These quantities are
+used below to define normalized local intelligence and search-efficiency
+metrics; they do not affect the definition of the global intelligence
+functional itself.
 
 ---
 
@@ -177,6 +214,74 @@ Informally:
 Different choices of \((\mathcal{E},G,R,w,\mu)\) induce different
 intelligence measures. All contextual interpretation (e.g. local niche
 vs. broad generality) is handled in `CONTEXT_AND_LITERATURE.md`.
+
+### 3.3 Local search efficiency, baselines, and their relation
+
+For a fixed \((e,g,R)\) we often want to compare three objects:
+
+- the **blind baseline** \(\pi_{\mathrm{blind}}\),
+- the **agent of interest** \(\pi\),
+- and an **optimal** policy \(\pi^* \in \Pi(R)\) (or a maximizing sequence),
+
+all evaluated with respect to a cost functional
+\(J(\cdot; e,g,R)\) as in §2.3. This leads to two complementary
+local quantities.
+
+1. The **blind-relative search efficiency**
+
+   \[
+   K(\pi; e,g,R)
+   := \log_{10} \frac{J(\pi_{\mathrm{blind}}; e,g,R)}{J(\pi; e,g,R)},
+   \]
+
+   which measures how many orders of magnitude of cost \(\pi\) saves
+   relative to the blind baseline on that particular problem.
+
+2. The **baseline-anchored local intelligence**
+
+   \[
+   I_{\mathrm{local}}(\pi; e,g,R)
+   := \frac{J(\pi_{\mathrm{blind}}; e,g,R) - J(\pi; e,g,R)}
+            {J(\pi_{\mathrm{blind}}; e,g,R) - J(\pi^*; e,g,R)}.
+   \]
+
+   Here \(I_{\mathrm{local}} = 0\) for the blind policy,
+   \(I_{\mathrm{local}} = 1\) for an optimal policy, and
+   \(I_{\mathrm{local}}\) can be negative (worse than blind) or greater
+   than 1 (better than our model of the optimum) when the modeling
+   assumptions are violated.
+
+The optimal blind-relative efficiency in \((e,g,R)\) is
+
+\[
+K_{\mathrm{opt}}(e,g,R)
+:= \log_{10} \frac{J(\pi_{\mathrm{blind}}; e,g,R)}{J(\pi^*; e,g,R)}.
+\]
+
+These quantities are linked by the identity
+
+\[
+K(\pi; e,g,R)
+= K_{\mathrm{opt}}(e,g,R)
+  + \log_{10} I_{\mathrm{local}}(\pi; e,g,R),
+\]
+
+whenever the costs are finite and the logarithm is defined. Thus:
+
+- \(K_{\mathrm{opt}}\) characterizes the **opportunity for
+  intelligence** in a given problem (how much better than blind optimal
+  performance could in principle be),
+- \(I_{\mathrm{local}}\) measures the **fraction of that opportunity**
+  that \(\pi\) actually realizes,
+- \(K(\pi)\) records the **overall compression** of search cost
+  achieved by \(\pi\) relative to blind.
+
+The global functional \(I(\pi;\mathcal{E},G,R,w,\mu)\) can be viewed
+as an aggregation of such local competences across \((e,g)\) drawn
+from \((w,\mu)\). In contexts where a blind baseline is available it
+is often natural to use \(I_{\mathrm{local}}\) as the normalized
+performance factor inside that aggregation; in other contexts the
+simpler ratio \(\mathrm{Perf} / \mathrm{Perf}^*\) may be used.
 
 ---
 

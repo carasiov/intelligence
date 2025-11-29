@@ -1,7 +1,7 @@
 # Context and Literature for the Resource-Bounded Theory of Intelligence
 
 This document provides conceptual background and literature context for
-the formal core defined in `01 INTELLIGENCE.md`. It explains:
+the formal core defined in `01_INTELLIGENCE.md`. It explains:
 
 - why we define intelligence as **normalized goal-achievement under resource constraints**,
 - how this relates to existing work in AI, cognitive science, and biology,
@@ -9,7 +9,7 @@ the formal core defined in `01 INTELLIGENCE.md`. It explains:
 - how capability can be decomposed into components (generality, adaptivity, robustness, compositionality),
 - what kinds of theorems and empirical results this framework is meant to support.
 
-`01 INTELLIGENCE.md` should remain compact and formal; this document is
+`01_INTELLIGENCE.md` should remain compact and formal; this document is
 allowed to be explanatory and discursive.
 
 ---
@@ -40,7 +40,7 @@ w(e)\,\mu(g \mid e)\,
 dg\,de,
 \]
 
-as defined in `01 INTELLIGENCE.md`.
+as defined in `CORE.md`.
 
 This construction synthesizes and extends several lines of work:
 
@@ -61,6 +61,88 @@ Compared to these, our framework:
   rather than an unbounded ideal agent,
 - is designed from the outset to be **substrate-neutral and multi-scale**,
   applicable to cells, tissues, organisms, collectives, and artificial systems.
+
+### Problem spaces as a concrete instantiation
+
+A useful concrete instantiation of the general \((\mathcal{E},G,R)\)
+picture comes from **problem spaces**
+\(P = \langle S, O, C, E, H\rangle\), as used in recent work on basal
+cognition and multi-scale biological intelligence.
+
+- \(S\): a state space (configurations the system can occupy).
+- \(O\): a set of operators (elementary transitions between states).
+- \(C\): constraints specifying which state–operator pairs are forbidden.
+- \(E\): an evaluation functional assigning value or “goodness” to states
+  (e.g. reward, fitness, morphogenetic error, or variational free energy).
+- \(H\): an effective **prediction horizon** (how many operator steps
+  ahead the system can meaningfully evaluate or predict).
+
+In our language, a fixed problem space \(P\) corresponds to a particular
+choice of environment \(e\), goal \(g\), and resource vector \(R\):
+
+- \(S\) and \(O\) capture the relevant parts of the environment dynamics,
+- \(C\) and \(H\) encode resource and feasibility constraints,
+- \(E\) plays the role of a goal functional (possibly derived from a
+  generative model, as in free-energy formulations).
+
+The point of making \(C, E, H\) explicit is that **biological and
+artificial agents can edit them**: relaxing constraints, changing
+evaluation criteria, or extending horizon are all levers of
+“meta-intelligence” discussed below.
+
+### Two-metric picture: search compression vs. normalized performance
+
+For a fixed problem \((e,g,R)\), there are two complementary ways to
+evaluate an agent:
+
+1. **Search compression vs. a blind baseline**.  
+   Given a cost functional \(J(\cdot; e,g,R)\) and a blind policy
+   \(\pi_{\mathrm{blind}}\), we can measure how many orders of magnitude
+   of cost an agent \(\pi\) saves relative to blind search. This is the
+   role of a quantity like
+   \[
+   K(\pi; e,g,R) = \log_{10} \frac{J(\pi_{\mathrm{blind}}; e,g,R)}
+                                    {J(\pi; e,g,R)}.
+   \]
+   Higher \(K\) means stronger pruning of the search space compared to a
+   max-entropy or otherwise unstructured baseline.
+
+2. **Normalized performance vs. optimal**.  
+   We can also ask what fraction of the best resource-feasible
+   performance the agent achieves. In `01_INTELLIGENCE.md` this appears
+   both as the simple ratio \(\mathrm{Perf} / \mathrm{Perf}^*\) and, in a
+   baseline-anchored form, as a local intelligence
+   \(I_{\mathrm{local}}(\pi; e,g,R)\) that equals 0 for the blind
+   policy, 1 for an optimal policy, and can in principle be negative
+   (worse than blind) or greater than 1 (better than our model of the
+   optimum).
+
+Together, \(K\) and \(I_{\mathrm{local}}\) place an agent at a point in a
+**two-dimensional space**:
+
+- \(K\) captures **how much the agent compresses search** in that
+  problem space, relative to chance.
+- \(I_{\mathrm{local}}\) captures **how close it comes to the best
+  achievable performance** under the same resource constraints.
+
+Different systems can therefore have very different profiles:
+
+- A bacterium doing chemotaxis can have **high \(K\)** (huge pruning of
+  molecular configuration space relative to random diffusion) and also
+  **high \(I_{\mathrm{local}}\)** (evolution has pushed it close to its
+  physical limits).
+- A student learning chess can have **moderate \(K\)** (already much
+  better than random play in a vast game tree) but **low
+  \(I_{\mathrm{local}}\)** (far from grandmaster or optimal play).
+- A thermostat can have **low \(K\)** (the problem space is tiny and
+  simple), but **\(I_{\mathrm{local}} \approx 1\)** (it essentially
+  saturates what is achievable in its niche).
+
+The global functional \(I(\pi; \mathcal{E},G,R,w,\mu)\) aggregates such
+local competences across \((e,g)\) drawn from \((w,\mu)\); the Levin-type
+search-efficiency metric \(K\) and its optimal counterpart \(K_{\mathrm{opt}}\)
+are best understood as **local, problem-specific ingredients** inside
+that broader picture.
 
 ---
 
@@ -145,6 +227,76 @@ multi-scale composition mathematically explicit, including:
 - how their **cognitive light cones** (regions of spacetime where goals
   can be competently pursued) expand or fragment under fusion and
   breakdown.
+
+### Meta-level problem reformulation and representational creativity
+
+At every scale, agents do not only search **within** a fixed problem
+space; they also sometimes act on the **problem space itself**. In the
+problem-space notation \(P = \langle S,O,C,E,H\rangle\), such meta-level
+moves include:
+
+- changing the granularity or variables of \(S\),
+- adding or removing operators in \(O\),
+- relaxing or tightening constraints \(C\),
+- modifying the evaluation functional \(E\) (e.g. changing goals or
+  priors),
+- extending or shortening the effective horizon \(H\).
+
+We can view these as transitions in a meta-space \(\mathcal{P}^{(2)}\)
+whose states are problem spaces and whose operators are edits to
+\((S,O,C,E,H)\). Searching well in \(\mathcal{P}^{(2)}\) corresponds to
+**representational creativity** or **meta-intelligence**: finding
+problem formulations in which downstream search becomes far more
+efficient.
+
+Formally, one could define meta-level analogues \(K^{(2)}, I^{(2)}\)
+that score how well a system navigates \(\mathcal{P}^{(2)}\) relative to
+a naive edit process, but a principled choice of “blind baseline” in
+\(\mathcal{P}^{(2)}\) remains an open problem (see `OPEN_PROBLEMS.md`).
+
+### Conscious macro-agents (functional hypothesis)
+
+Within this multi-scale, compositional picture we can make a purely
+**functional** proposal about consciousness.
+
+A macro-agent at some scale \(\Sigma\) is a candidate **conscious
+agent** (with respect to \(\Sigma\)) when three conditions jointly hold:
+
+1. **Integration**.  
+   The \(\mathsf{IsAgent}\) predicate holds for the set of components at
+   scale \(\Sigma\): internally they are strongly coupled and externally
+   they behave as a single policy with a well-defined cognitive light
+   cone.
+
+2. **Self-model \(M\)**.  
+   The macro-agent carries an internal structure \(M\) that
+   (approximately) represents:
+   - its own boundary and controllable region (an internal model of its
+     light cone),
+   - its current goals or preferred trajectories,
+   and that participates in control: the macro-policy effectively
+   factors through \(M\), and interventions on \(M\) lead to systematic,
+   interpretable changes in behavior.
+
+3. **Coherence maintenance via \(M\)**.  
+   There is an ongoing process that:
+   - detects mismatches between what \(M\) predicts and what actually
+     happens,
+   - updates \(M\) to reduce these mismatches,
+   - and uses the updated \(M\) to steer behavior back toward coherent,
+     goal-consistent functioning.
+
+On this view, unconscious homeostasis corresponds to cases where
+integration holds but there is no self-model in the control loop, or
+where \(M\) is too limited to represent boundaries and goals in a
+flexible, counterfactual way. Conscious control corresponds to cases
+where a rich \(M\) both *tracks* and *helps maintain* the macro-agent’s
+own \(\mathsf{IsAgent}\) status.
+
+This is deliberately a **functional** story: it concerns what
+consciousness does in the organization of agents across scales, and is
+silent on why or whether such processes are accompanied by subjective
+experience.
 
 ---
 
@@ -304,13 +456,47 @@ Examples include:
 The same \(I(\pi;\cdot)\) can be used, in principle, to compare such
 systems on common environments and resource budgets.
 
+### 6.3 Basal cognition: chemotaxis and regeneration
+
+Recent work on **amoeboid chemotaxis** and **planarian regeneration**
+provides concrete case studies for the problem-space and two-metric
+picture.
+
+- In amoeboid chemotaxis (e.g. *Dictyostelium*), the problem space
+  includes spatial positions and internal signaling states, operators
+  are protrusive moves, constraints come from cell mechanics, and the
+  prediction horizon \(H\) is effectively very short (decisions are
+  myopic). Empirical modeling suggests a blind-relative search
+  efficiency \(K \approx 2\): the real cell is about \(10^2\) times more
+  efficient than a max-entropy baseline in that space.
+
+- In planarian regeneration under strong perturbations (e.g. barium
+  treatments), the problem space is a high-dimensional combination of
+  gene-expression and morphology; operators are transcriptional and
+  morphogenetic changes; constraints include developmental and
+  mechanical limits; \(E\) encodes distance to a target body plan, and
+  the effective horizon \(H\) (in units of cell-cycle updates) can be
+  very large. Only a small fraction of the transcriptome actually moves
+  during successful regeneration, indicating highly targeted search.
+  Modeling suggests \(K \approx 21\), i.e. about \(10^{21}\)-fold
+  compression relative to blind search.
+
+These examples:
+
+- instantiate the *same* problem-space and two-metric ideas in real
+  biological systems,
+- provide evidence that tissue- or organism-level agents achieve search
+  efficiencies unavailable to independent cells,
+- and offer concrete anchors for the “multi-scale competency
+  architecture” story and our own light-cone and composition picture.
+
 ---
 
 ## 7. How This Document Relates to the Core
 
 To keep the project organized:
 
-- `01 INTELLIGENCE.md`  
+- `01_INTELLIGENCE.md`  
   contains **formal definitions**:
   - environments, goals, resources, policies,
   - performance, optimal performance,
@@ -350,7 +536,16 @@ context.
 - [(Andreas et al., 2016)](https://openaccess.thecvf.com/content_cvpr_2016/papers/Andreas_Neural_Module_Networks_CVPR_2016_paper.pdf). Neural module networks.
 - [(Kaplan et al., 2020)](https://arxiv.org/abs/2001.08361). Scaling laws for neural language models.
 - [(Bahri et al., 2021)](https://arxiv.org/abs/2102.06701). Explaining neural scaling laws.
+- [(Chis-Ciure & Levin, 2025)](https://link.springer.com/article/10.1007/s11229-025-05319-6).
+  Cognition all the way down 2.0: problem spaces and the scaling of biological intelligence.
+- [(Fields & Levin, 2025)](https://www.tandfonline.com/doi/pdf/10.1080/19420889.2025.2466017).
+  Life, its origin, and its distribution: a perspective from the Conway–Kochen Theorem and the Free Energy Principle.
 
-
-
-Recent work grounded in the Free Energy Principle argues that all persistent physical systems exhibit Bayesian satisficing [Fields & Levin, 2025]([Life, its origin, and its distribution: a perspective from the Conway-Kochen Theorem and the Free En](https://www.tandfonline.com/doi/pdf/10.1080/19420889.2025.2466017)). If this view is correct, the question is not *whether* a system is cognitive, but *how effectively* it achieves goals under resource constraints. The intelligence functional I(π;E,G,R,w,μ)I(\pi; \mathcal{E}, G, R, w, \mu) I(π;E,G,R,w,μ) provides a quantitative answer to this question, applicable across substrates and scales.
+Recent work grounded in the Free Energy Principle argues that all
+persistent physical systems exhibit Bayesian satisficing
+[(Fields & Levin, 2025)](https://www.tandfonline.com/doi/pdf/10.1080/19420889.2025.2466017).
+If this view is correct, the question is not *whether* a system is
+cognitive, but *how effectively* it achieves goals under resource
+constraints. The intelligence functional
+\(I(\pi; \mathcal{E}, G, R, w, \mu)\) provides a quantitative answer to
+this question, applicable across substrates and scales.
