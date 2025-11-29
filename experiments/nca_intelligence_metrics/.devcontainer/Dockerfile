@@ -23,24 +23,29 @@ ENV POETRY_VIRTUALENVS_IN_PROJECT=true
 ENV PATH="$POETRY_HOME/bin:$PATH"
 RUN curl -sSL https://install.python-poetry.org | python3 -
 
-# Create non-root user
-RUN useradd -m -s /bin/bash appuser
+# Create non-root user with UID 1000 (common host UID)
+ARG USER_UID=1000
+ARG USER_GID=1000
+RUN groupadd --gid $USER_GID devuser \
+    && useradd --uid $USER_UID --gid $USER_GID -m -s /bin/bash devuser
 
 # Set working directory
-WORKDIR /app
+WORKDIR /workspace
 
 # Copy project files (context is parent directory)
-COPY pyproject.toml poetry.lock* README.md ./
-COPY src/ ./src/
-COPY scripts/ ./scripts/
-COPY tests/ ./tests/
+COPY --chown=devuser:devuser pyproject.toml poetry.lock* README.md ./
+COPY --chown=devuser:devuser src/ ./src/
+COPY --chown=devuser:devuser scripts/ ./scripts/
+COPY --chown=devuser:devuser tests/ ./tests/
 
-# Install dependencies (as root, then fix permissions)
-RUN poetry install --no-root --no-interaction && \
-    chown -R appuser:appuser /app
+# Create results directory
+RUN mkdir -p results && chown devuser:devuser results
+
+# Install dependencies
+RUN poetry install --no-root --no-interaction
 
 # Switch to non-root user
-USER appuser
+USER devuser
 
 # Verify JAX can see CUDA (will fail gracefully if no GPU during build)
 RUN poetry run python -c "import jax; print(f'JAX devices: {jax.devices()}')" || echo "GPU check skipped during build"

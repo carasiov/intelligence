@@ -16,14 +16,14 @@
         "charliermarsh.ruff"
       ],
       "settings": {
-        "python.defaultInterpreterPath": "/app/.venv/bin/python",
+        "python.defaultInterpreterPath": "/workspace/.venv/bin/python",
         "python.terminal.activateEnvironment": true,
         "editor.formatOnSave": true,
         "editor.rulers": [88]
       }
     }
   },
-  "postCreateCommand": "poetry install",
-  "workspaceFolder": "/app",
-  "remoteUser": "appuser"
+  "postCreateCommand": "poetry install --no-root",
+  "workspaceFolder": "/workspace",
+  "remoteUser": "devuser"
 }
