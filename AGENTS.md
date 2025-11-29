@@ -1,134 +1,158 @@
-### Core idea
+# High-Level Summary of the Resource-Bounded Intelligence Framework
+
+### Core Idea
 
 At the center is a **resource-bounded, substrate-neutral definition of intelligence**.
 
-An agent is a policy (\pi) interacting with an environment class (\mathcal{E}), pursuing a family of goals (G) under resource constraints (R). For any such setup you define:
+An agent is a policy (\pi) interacting with an environment class (\mathcal{E}), pursuing goals (G) under resource constraints (R). For each environment–goal pair ((e,g)) we define:
 
-* a performance functional (\mathrm{Perf}(\pi; e,g,R)) on trajectories,
-* the optimal achievable performance (\mathrm{Perf}^*(e,g,R)) over all resource-feasible policies (\Pi(R)),
-* and an **intelligence functional**
-  [
-  I(\pi;\mathcal{E},G,R,w,\mu)
-  ]
-  that aggregates normalized performance (\mathrm{Perf}/\mathrm{Perf}^*) over environments (e\sim\mu) and goals (g\sim w). 
+* a **performance functional** (\mathrm{Perf}(\pi; e,g,R)),
+* the **optimal performance** (\mathrm{Perf}^*(e,g,R)) over all policies satisfying (R),
+* a **cost functional** (J(\pi; e,g,R)), enabling comparison to a **blind baseline** (\pi_{\mathrm{blind}}) and an **optimal policy** (\pi^*).
 
-This is deliberately analogous to Shannon’s move in information theory: instead of defining “intelligence” philosophically, you define a quantitative functional over **(environments, goals, resources, policies)** and then study its structure.
+This yields two complementary local measures:
+
+1. **Search compression (vs. blind):**
+   [
+   K = \log_{10}\frac{J(\pi_{\mathrm{blind}})}{J(\pi)}.
+   ]
+
+2. **Normalized performance (vs. optimal):**
+   [
+   I_{\mathrm{local}} = \frac{J(\pi_{\mathrm{blind}})-J(\pi)}{J(\pi_{\mathrm{blind}})-J(\pi^*)}.
+   ]
+
+A global intelligence functional
+[
+I(\pi;\mathcal{E},G,R,w,\mu)
+]
+aggregates normalized performance across environment and goal distributions, analogous to Shannon’s aggregation over channels.
+
+This defines intelligence not philosophically but as a **quantitative functional over (environments, goals, resources, policies)**.
 
 ---
 
-### Context and regimes
+### Context and Regimes
 
-In this view, “intelligence” is **not a single scalar in the void**. Its meaning and value depend on the choice of:
-
+Intelligence depends entirely on the specification:
 [
 (\mathcal{E}, G, R, w, \mu).
 ]
 
-Different choices describe different notions of intelligence:
+Different choices describe:
 
-* **Local ecological intelligence**: an organism (or controller) evaluated on a narrow class of environments and goals (its niche).
-* **Task-specific / benchmark intelligence**: ML systems evaluated on particular task families or benchmarks.
-* **Broad / general intelligence**: policies evaluated on heterogeneous environment classes with diverse goals.
+* **Local ecological intelligence**
+* **Task-specific / benchmark intelligence**
+* **Broad / general intelligence**
 
-Capability naturally decomposes along several axes:
+Capability decomposes along natural axes:
 
-* **Generality** – how broad (\mathcal{E}) is.
-* **Adaptivity** – how performance behaves under shifts in (\mu).
-* **Robustness** – how performance behaves in tails, adversarial conditions, and worst cases.
-* **Compositionality / multi-scale structure** – what happens to (I) when you build larger agents out of smaller ones.
+* **Generality** (breadth of (\mathcal{E}))
+* **Adaptivity** (how performance changes under (\mu)-shift)
+* **Robustness** (behavior under worst-case or adversarial conditions)
+* **Compositionality / multi-scale structure**
+* **Prediction depth** (prediction horizon (H) as a distinct resource)
 
-All of these are **derived views** of the same core object (I) under different ways of varying ((\mathcal{E},G,R,\mu)). 
-
----
-
-### Formal core (CORE.md)
-
-`CORE.md` provides the mathematical backbone: 
-
-* **Environment classes** (\mathcal{E}) with state, action, and observation spaces and dynamics.
-* **Policies** (\pi) as mappings from interaction histories to action distributions.
-* **Goals** as functionals on trajectories, not just scalar reward functions on states.
-* A **resource space** (R) and resource-feasible policy sets (\Pi(R)) that encode limits (time, computation, memory, communication, energy, etc.).
-* A performance functional (\mathrm{Perf}(\pi;e,g,R)), optimal performance (\mathrm{Perf}^*(e,g,R)), and then the normalized intelligence functional (I).
-
-The core also introduces a bridge from **replicators** (e.g. genomes, code) to agents:
-
-* Each replicator (r) is mapped via an interpretation (D(r)) to an agent policy (\pi_r).
-* This lets you talk about **evolutionary fitness** (F(r;\cdot)) and **operational intelligence** (I(\pi_r;\cdot)) in the same framework, and to reason about how **combining replicators** (symbiogenesis, code composition) induces new composite agents.
-
-So the core is a **general language** for talking about any policy-bearing system under constraints, biological or artificial.
+These are all **derived views** of the same underlying mathematical structure.
 
 ---
 
-### Geometry: light cones and local competence
+### Formal Core (CORE.md)
 
-`Light Cones and Composition.md` adds a **geometric layer** by embedding agents in spacetime and distinguishing two kinds of light cone: 
+`CORE.md` provides the mathematical backbone:
 
-1. **Physical light cones** – regions of spacetime the agent can in principle observe or influence given its physical speed, sensing reach, actuation range, and horizon.
-2. **Goal-based cognitive light cones** – the subset of spacetime where the agent can **competently** achieve localized goals (i.e. where its normalized performance exceeds a threshold).
+* **Environment classes** with states, actions, observations, and dynamics.
+* **Policies** (\pi) mapping histories to actions.
+* **Goals** as trajectory-level functionals.
+* **Resource vectors** (R) including time (T), prediction horizon (H), computation, memory, energy, communication.
+* **Performance** (\mathrm{Perf}), **optimal performance** (\mathrm{Perf}^*), and the global **intelligence functional** (I).
 
-Under a locality assumption, you can prove that **goal-based cognitive cones always lie inside physical cones**: you cannot reliably control regions you cannot even physically reach or sense.
+A baseline-sensitive normalization links blind baselines, optimal policies, and the metrics (K), (K_{\mathrm{opt}}), and (I_{\mathrm{local}}) via:
+[
+K = K_{\mathrm{opt}} + \log_{10} I_{\mathrm{local}}.
+]
 
-In this picture, the global intelligence functional (I) can be reinterpreted as an **average of local competencies** over regions of spacetime, weighted by (\mu) and (w). Roughly: “how bright is the agent’s goal-based light cone, on average, for the environments and goals we care about?”
-
-A concrete 1D “corridor” model shows this is not just metaphor:
-
-* Agents move along a line, must detect and reach targets within a time horizon, with bounded speed and sensing/actuation radii.
-* One can derive explicit **capacity bounds** on the set of target locations that are reliably reachable.
-* For multiple agents, there is a **team capacity** that scales approximately linearly with the number of agents until their cones overlap and the environment’s finite size forces saturation.
-
-In that toy world, you get a **clean capacity law** and a clear “phase diagram” of regimes (detection-limited, coupled, reach-limited).
+A mapping from **replicators** (r) (genomes, code) to policies (\pi_r) connects **evolutionary fitness** and **operational intelligence**.
 
 ---
 
-### Multi-agent structure, self-boundaries, and composition
+### Geometry: Light Cones and Local Competence
 
-The same geometric tools let you talk about **when a group of agents behaves like one agent**. 
+`Light Cones and Composition.md` introduces a geometric layer with:
 
-* A **communication / interaction graph** (B) encodes who can talk to or influence whom.
-* A predicate (\mathsf{IsAgent}(\mathcal{A})) characterizes sets of agents (\mathcal{A}) that are:
+1. **Physical light cones** — regions the agent can observe or influence.
+2. **Goal-based cognitive light cones** — regions where competence exceeds a threshold.
 
-  * internally strongly connected,
-  * sufficiently coupled (they exchange enough information / resources),
-  * externally indistinguishable (to the rest of the world) from some macro-policy over the combined interface.
+Cognitive cones lie within physical cones. The global intelligence functional can be interpreted as an **average brightness** of local competence over spacetime.
 
-When (\mathsf{IsAgent}(\mathcal{A})) holds, a **composition operator** (S^{\text{agent}}) maps the team into a single **macro-agent policy** with its own light cone and its own intelligence functional (I). In corridor-like settings, this recovers the intuitive result that:
+A simple 1D corridor model yields explicit **capacity bounds** and **scaling laws**:
 
-* team capacity ≈ “sum of individual capacities” while cones don’t overlap,
-* then saturates at an environment-determined ceiling once the team effectively covers the whole space.
+* single-agent detection/reach sets shrink with local sensing and finite (H),
+* multi-agent capacity grows linearly before saturating once cones overlap.
 
-This provides a principled way to talk about **self-boundaries** (what counts as “one agent”) and how to move up and down levels of description.
+This demonstrates that light cones are **not metaphors** but calculable geometric constraints.
 
 ---
 
-### Multi-scale agency and symbiogenesis
+### Multi-Agent Structure, Self-Boundaries, and Composition
 
-With these pieces, you can view **cells, tissues, organs, organisms, and collectives** as agents at different scales:
+A **communication graph** (B) and a predicate (\mathsf{IsAgent}(\mathcal{A})) define when a collection of agents behaves as one macro-agent:
 
-* each with its own environment class (\mathcal{E}), goals (G), resources (R),
-* each with its own intelligence functional (I) and light cone.
+* strong internal coupling,
+* coherent external behavior,
+* stable goal-based competence.
 
-**Symbiogenesis** and fusion events (at the replicator level) correspond to forming new composite agents whose self-boundaries include multiple previous units. When conditions for (\mathsf{IsAgent}) are met, this enlarges the goal-based cognitive light cone and enables pursuit of **larger-scale goals**. Conversely, breakdowns in coupling (e.g. cancer, social fragmentation) correspond to **cone collapse** and a drop in higher-level (I).
+A **composition operator** (S^{\mathrm{agent}}) yields a macro-policy with its own light cone and intelligence.
 
-This story is compatible with “everything is cognitive” perspectives (like the Free Energy Principle), but with a different emphasis:
+Capacity laws follow:
 
-* not “everything is Bayesian,” but “to what extent, and at what scales, does a system **actually achieve goals under resource constraints?**”
+* before cone overlap: **additive capability**,
+* after overlap: **saturation**,
+* under coupling failure: **cone collapse** and loss of macro-intelligence.
+
+This formalizes **self-boundaries** and how new agents emerge at higher scales.
 
 ---
 
-### Overall story
+### Multi-Scale Agency, Symbiogenesis, and Self-Models
+
+Cells, tissues, organisms, and collectives each have their own:
+
+* problem spaces (P = \langle S,O,C,E,H \rangle),
+* intelligence metrics,
+* light cones.
+
+**Symbiogenesis** and fusion events correspond to forming new macro-agents satisfying (\mathsf{IsAgent}). Breakdowns in coupling (e.g. cancer, social fragmentation) correspond to macro-agent collapse.
+
+A macro-agent is **functionally conscious** when it also carries a **self-model** (M) that:
+
+1. represents its own boundary, goals, and approximate light cone,
+2. participates causally in control,
+3. is maintained by coherence processes correcting mismatches between prediction and reality.
+
+This is a functional account of consciousness as **maintenance of macro-agency**, not a claim about subjective experience.
+
+---
+
+### Overall Story
 
 Taken together, the documents define:
 
-* a **general, resource-bounded intelligence functional** (I(\pi;\mathcal{E},G,R,w,\mu)),
-* a **geometric interpretation** via cognitive light cones and local competence in spacetime,
-* a **multi-agent and multi-scale architecture** via self-boundaries and composition.
+* a **general intelligence functional** (I(\pi;\mathcal{E},G,R,w,\mu)),
+* a complementary **search-efficiency axis** (K),
+* a **geometric interpretation** via light cones,
+* a **multi-scale composition theory** via (\mathsf{IsAgent}) and (S^{\mathrm{agent}}),
+* a **functional self-model architecture** for conscious macro-agency.
 
-The aim is **not** just a slogan like “intelligence is goal-achievement.” It is to build a reusable, quantitative framework in which you can:
+The goal is analogous to Shannon’s programme:
 
-* prove **capacity bounds** (what regions of state/space/time can be reliably controlled under given resources?),
-* derive **composition laws** (how does capability scale with more agents or more structure?),
-* explore **trade-offs** (robustness vs efficiency, local vs global goals),
-* and relate **very different systems**—ML models, single cells, tissues, organisms, collectives—within one coherent theory.
+> **Not to define intelligence philosophically, but to define a clean mathematical object that supports capacity bounds, theorems, and cross-domain comparisons.**
 
-In that sense, the project is meant to play for intelligence the role Shannon’s theory played for communication: not to settle the philosophy, but to provide the mathematical stage on which concrete theorems and cross-domain comparisons can be made.
+This enables:
+
+* **capacity bounds** on controllability in space/time,
+* **composition laws** for scaling up agents,
+* **robust trade-off analysis** (efficiency vs robustness vs prediction depth),
+* and **cross-domain comparison** of RL agents, neural cellular automata, cells, tissues, organisms, and collectives.
+
+Intelligence becomes a **resource-bounded, multi-scale, geometric, and measurable quantity**.

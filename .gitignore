@@ -1,0 +1,28 @@
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+
+# Experiment outputs
+experiments/*/results/
+experiments/*/results_*/
+experiments/*/*.out
+experiments/*/*.err
+
+# Checkpoints
+checkpoint_*/
+*.ckpt
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
