@@ -168,7 +168,7 @@ def training_loop(
     Returns:
         Updated TrainingState with trained model and metrics
     """
-    output_dir = Path(train_config.output_dir) / train_config.run_name
+    output_dir = Path(train_config.output_dir).resolve() / train_config.run_name
     output_dir.mkdir(parents=True, exist_ok=True)
     
     seed = make_seed(nca_config)

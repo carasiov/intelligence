@@ -269,7 +269,13 @@ def main():
     args = parser.parse_args()
     
     output_dir = Path(args.output)
-    output_dir.mkdir(parents=True, exist_ok=True)
+    try:
+        output_dir.mkdir(parents=True, exist_ok=True)
+    except PermissionError:
+        # Fall back to /tmp if we can't write to the specified directory
+        print(f"Warning: Cannot write to {output_dir}, using /tmp/nca_results instead")
+        output_dir = Path("/tmp/nca_results")
+        output_dir.mkdir(parents=True, exist_ok=True)
     
     key = random.PRNGKey(args.seed)
     
