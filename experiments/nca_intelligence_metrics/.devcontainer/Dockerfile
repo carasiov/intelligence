@@ -29,11 +29,14 @@ RUN useradd -m -s /bin/bash appuser
 # Set working directory
 WORKDIR /app
 
-# Copy dependency files first (for caching)
+# Copy project files (context is parent directory)
 COPY pyproject.toml poetry.lock* ./
+COPY src/ ./src/
+COPY scripts/ ./scripts/
+COPY tests/ ./tests/
 
 # Install dependencies (as root, then fix permissions)
-RUN poetry install --no-root --no-interaction && \
+RUN poetry install --no-interaction && \
     chown -R appuser:appuser /app
 
 # Switch to non-root user

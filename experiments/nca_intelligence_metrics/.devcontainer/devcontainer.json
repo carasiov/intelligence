@@ -1,6 +1,7 @@
 {
   "name": "NCA Intelligence Metrics",
   "build": {
+    "context": "..",
     "dockerfile": "Dockerfile"
   },
   "runArgs": [
@@ -24,10 +25,5 @@
   },
   "postCreateCommand": "poetry install",
   "workspaceFolder": "/app",
-  "workspaceMount": "source=${localWorkspaceFolder},target=/app,type=bind",
-  "mounts": [
-    "source=${localWorkspaceFolder}/results,target=/app/results,type=bind"
-  ],
-  "forwardPorts": [],
   "remoteUser": "appuser"
 }
