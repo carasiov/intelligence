@@ -16,14 +16,15 @@
         "charliermarsh.ruff"
       ],
       "settings": {
-        "python.defaultInterpreterPath": "/workspace/.venv/bin/python",
+        "python.defaultInterpreterPath": "/workspace/experiments/nca_intelligence_metrics/.venv/bin/python",
         "python.terminal.activateEnvironment": true,
         "editor.formatOnSave": true,
-        "editor.rulers": [88]
+        "editor.rulers": [88],
+        "terminal.integrated.cwd": "/workspace/experiments/nca_intelligence_metrics"
       }
     }
   },
-  "postCreateCommand": "cd experiments/nca_intelligence_metrics && poetry install --no-root",
+  "postCreateCommand": "cd /workspace/experiments/nca_intelligence_metrics && poetry lock --no-update && poetry install --no-root && echo '✅ Ready! Run: poetry run python scripts/run_phase1.py'",
   "workspaceFolder": "/workspace",
   "containerUser": "root"
 }
