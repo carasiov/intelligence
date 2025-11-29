@@ -38,9 +38,6 @@ COPY --chown=devuser:devuser src/ ./src/
 COPY --chown=devuser:devuser scripts/ ./scripts/
 COPY --chown=devuser:devuser tests/ ./tests/
 
-# Create results directory
-RUN mkdir -p results && chown devuser:devuser results
-
 # Install dependencies
 RUN poetry install --no-root --no-interaction
 

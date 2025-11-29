@@ -23,7 +23,7 @@
       }
     }
   },
-  "postCreateCommand": "poetry install --no-root",
+  "postCreateCommand": "poetry install --no-root && mkdir -p results",
   "workspaceFolder": "/workspace",
   "remoteUser": "devuser"
 }
